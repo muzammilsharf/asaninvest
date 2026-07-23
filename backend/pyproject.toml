@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.139.2",
+    "joblib>=1.5.3",
     "pandas>=3.0.3",
+    "psxdata>=0.1.0a5",
     "scikit-learn>=1.9.0",
     "uvicorn>=0.51.0",
 ]
