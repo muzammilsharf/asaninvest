@@ -4,6 +4,13 @@ import logging
 import pandas as pd
 import tickers
 
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error
+import joblib
+import os
+
+logging.basicConfig(level=logging.INFO)
+
 # Loop through all tickers and load their cached data and sort by ascending date
 def load_cached_data() -> dict[str, pd.DataFrame]:
     combined_data : dict[str, pd.DataFrame] = {}
@@ -107,3 +114,45 @@ def run_data_preprocessing(test_start_date: str) -> tuple[pd.DataFrame, pd.DataF
     feature_columns, target_columns = define_feature_target_columns(df)
     train_df, test_df = split_train_test(df, test_start_date)
     return train_df, test_df, feature_columns, target_columns
+
+# train the model using the training set and return the trained model
+'''Loop over the 4 target columns
+Train a RandomForestRegressor per target on train_df[feature_columns]
+Predict on test_df, compute MAE per horizon
+Return dict of trained models + dict of MAE scores
+
+Then save_models() saves each to model/model_{horizon}.pkl via joblib.'''
+def train_models(train_df: pd.DataFrame, test_df: pd.DataFrame, feature_columns: list[str], target_columns: list[str]) -> tuple[dict[str, object], dict[str, float]]:
+
+    models = {}
+    mae_scores = {}
+
+    os.makedirs("model", exist_ok=True)
+
+    for target in target_columns:
+        logging.info(f"Training model for {target}...")
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model.fit(train_df[feature_columns], train_df[target])
+        models[target] = model
+
+        predictions = model.predict(test_df[feature_columns])
+        mae = mean_absolute_error(test_df[target], predictions)
+        mae_scores[target] = mae
+        logging.info(f"Model for {target} trained with MAE: {mae:.4f}")
+
+        # Save the model
+        joblib.dump(model, f"model/model_{target}.pkl")
+        logging.info(f"Model for {target} saved to model/model_{target}.pkl")
+
+    return models, mae_scores
+
+if __name__ == "__main__":
+    train_df, test_df, feature_columns, target_columns = run_data_preprocessing("2026-03-01")
+
+    if train_df.empty:
+        logging.error("Preprocessing failed, aborting training.")
+    else:
+        models, mae_scores = train_models(train_df, test_df, feature_columns, target_columns)
+        logging.info("Training complete. MAE per horizon:")
+        for target, mae in mae_scores.items():
+            logging.info(f"  {target}: {mae:.4f}")
