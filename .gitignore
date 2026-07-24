@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# VS code local settings
+.vscode/
