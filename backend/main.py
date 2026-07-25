@@ -3,8 +3,17 @@ import tickers
 from schemas import StockInfo, HistoryPoint, PredictionResponse
 from predict import predict_for_symbol
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # for stock info endpoint
 @app.get("/stocks", response_model=list[StockInfo])
