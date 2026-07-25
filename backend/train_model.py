@@ -116,12 +116,6 @@ def run_data_preprocessing(test_start_date: str) -> tuple[pd.DataFrame, pd.DataF
     return train_df, test_df, feature_columns, target_columns
 
 # train the model using the training set and return the trained model
-'''Loop over the 4 target columns
-Train a RandomForestRegressor per target on train_df[feature_columns]
-Predict on test_df, compute MAE per horizon
-Return dict of trained models + dict of MAE scores
-
-Then save_models() saves each to model/model_{horizon}.pkl via joblib.'''
 def train_models(train_df: pd.DataFrame, test_df: pd.DataFrame, feature_columns: list[str], target_columns: list[str]) -> tuple[dict[str, object], dict[str, float]]:
 
     models = {}
@@ -131,7 +125,7 @@ def train_models(train_df: pd.DataFrame, test_df: pd.DataFrame, feature_columns:
 
     for target in target_columns:
         logging.info(f"Training model for {target}...")
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model = RandomForestRegressor(n_estimators=100, max_depth=12, random_state=42)
         model.fit(train_df[feature_columns], train_df[target])
         models[target] = model
 
@@ -141,7 +135,7 @@ def train_models(train_df: pd.DataFrame, test_df: pd.DataFrame, feature_columns:
         logging.info(f"Model for {target} trained with MAE: {mae:.4f}")
 
         # Save the model
-        joblib.dump(model, f"model/model_{target}.pkl")
+        joblib.dump(model, f"model/model_{target}.pkl", compress=3)
         logging.info(f"Model for {target} saved to model/model_{target}.pkl")
 
     return models, mae_scores
