@@ -33,12 +33,27 @@ def predict_for_symbol(symbol: str) -> dict:
         return {"symbol": symbol, "error": f"No data available for symbol {symbol}"}
 
     features = row[feature_columns]
+
+    # extract close price as a numeric scalar
+    close_val = row['close'].iat[0]
+    close_num = pd.to_numeric(close_val, errors='coerce')
+    if pd.isna(close_num):
+        logging.error(f"Invalid or missing close price for symbol {symbol}: {close_val}")
+        return {"symbol": symbol, "error": f"Invalid or missing close price for symbol {symbol}"}
+    current_close = float(close_num)
+
     predictions = {}
     try:
         for horizon, model in models.items():
-            predictions[horizon] = float(model.predict(features)[0])
+            predicted_return = float(model.predict(features)[0])
+            predictions[horizon] = {
+                "return": predicted_return,
+                "amount": round(current_close * (1 + predicted_return), 3)
+            }
+
     except Exception as e:
         logging.error(f"Prediction failed for symbol {symbol}: {str(e)}")
         return {"symbol": symbol, "error": f"Prediction failed for symbol {symbol}: {str(e)}"}
 
-    return {"symbol": symbol, "predictions": predictions}
+    return {"symbol": symbol, "current_price": current_close, "predictions": predictions}
+

@@ -1,31 +1,81 @@
+:root {
+  --bg-color: #0f1117;
+  --surface-color: #1a1d29;
+  --text-color: #e8e8e8;
+  --muted-text: #a0a0a0;
+  --border-color: #333;
+  --accent-color: #4ade80;
+  --negative-color: #f87171;
+  --mark-color: #ffffff;
+}
+
+[data-theme="light"] {
+  --bg-color: #f5f5f7;
+  --surface-color: #ffffff;
+  --text-color: #1a1a1a;
+  --muted-text: #666666;
+  --border-color: #dddddd;
+  --accent-color: #16a34a;
+  --negative-color: #dc2626;
+  --mark-color: #1a1a1a;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #0f1117;
-  color: #e8e8e8;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   line-height: 1.5;
 }
 
-header h1 {
+.logo {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 28px;
   margin-bottom: 4px;
-  color: #4ade80;
+  letter-spacing: -0.5px;
+}
+
+.logo-light {
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+.logo-bold-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-mark {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--mark-color);
+}
+
+.logo-bold {
+  font-weight: 700;
+  font-style: italic;
+  color: var(--accent-color);
 }
 
 header p {
-  color: #a0a0a0;
+  color: var(--muted-text);
   margin-top: 0;
 }
 
 section {
   margin: 24px 0;
   padding: 16px;
-  background-color: #1a1d29;
+  background-color: var(--surface-color);
   border-radius: 8px;
 }
 
@@ -39,14 +89,39 @@ select {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  background-color: #0f1117;
-  color: #e8e8e8;
-  border: 1px solid #333;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
 }
 
 canvas {
   max-height: 350px;
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#theme-toggle {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+#theme-toggle:hover {
+  background-color: var(--surface-color);
 }
 
 #forecast-results {
@@ -61,14 +136,30 @@ canvas {
   padding: 14px;
   border-radius: 8px;
   text-align: center;
-  background-color: #0f1117;
-  border: 1px solid #333;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.horizon-amount {
+  display: block;
+  font-size: 13px;
+  color: var(--muted-text);
+  margin-top: 4px;
 }
 
 .forecast-card .horizon-label {
   display: block;
   font-size: 13px;
-  color: #a0a0a0;
+  color: var(--muted-text);
   margin-bottom: 6px;
 }
 
@@ -79,21 +170,41 @@ canvas {
 }
 
 .forecast-card .horizon-value.positive {
-  color: #4ade80;
+  color: var(--accent-color);
 }
 
 .forecast-card .horizon-value.negative {
-  color: #f87171;
+  color: var(--negative-color);
+}
+
+.forecast-description {
+  font-size: 14px;
+  color: var(--muted-text);
+  margin-bottom: 12px;
 }
 
 footer {
   margin-top: 32px;
   padding-top: 16px;
-  border-top: 1px solid #333;
+  border-top: 1px solid var(--border-color);
 }
 
 .disclaimer {
   font-size: 13px;
-  color: #808080;
+  color: var(--muted-text);
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+  }
+
+  canvas {
+    max-height: 250px;
+  }
+
+  .forecast-card {
+    min-width: 45%;
+  }
 }

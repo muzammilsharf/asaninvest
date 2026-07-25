@@ -4,7 +4,24 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 const stockSelect = document.getElementById("stock-select");
 const chartTitle = document.getElementById("chart-title");
 const forecastResults = document.getElementById("forecast-results");
+const themeToggle = document.getElementById("theme-toggle");
 let priceChart = null;
+let allStocks = [];
+
+function applyTheme(theme) {
+  document.body.setAttribute("data-theme", theme);
+  themeToggle.textContent = theme === "light" ? "☀️" : "🌙";
+  localStorage.setItem("theme", theme);
+}
+
+const savedTheme = localStorage.getItem("theme") || "dark";
+applyTheme(savedTheme);
+
+themeToggle.addEventListener("click", () => {
+  const current = document.body.getAttribute("data-theme") || "dark";
+  const next = current === "dark" ? "light" : "dark";
+  applyTheme(next);
+});
 
 // Load the stock list and populate the dropdown
 async function loadStocks() {
@@ -19,6 +36,7 @@ async function loadStocks() {
     placeholder.textContent = "Select a stock...";
     stockSelect.appendChild(placeholder);
 
+    allStocks = stocks;
     stocks.forEach((stock) => {
       const option = document.createElement("option");
       option.value = stock.symbol;
@@ -98,19 +116,21 @@ async function loadForecast(symbol) {
 
     forecastResults.innerHTML = "";
     Object.keys(horizonLabels).forEach((key) => {
-      const value = data.predictions[key];
-      const percent = (value * 100).toFixed(2);
-      const isPositive = value >= 0;
-
-      const card = document.createElement("div");
-      card.className = "forecast-card";
-      card.innerHTML = `
-        <span class="horizon-label">${horizonLabels[key]}</span>
-        <span class="horizon-value ${isPositive ? "positive" : "negative"}">
-          ${isPositive ? "+" : ""}${percent}%
-        </span>
-      `;
-      forecastResults.appendChild(card);
+        const horizonData = data.predictions[key];
+        const percent = (horizonData.return * 100).toFixed(2);
+        const amount = horizonData.amount.toFixed(2);
+        const isPositive = horizonData.return >= 0;
+        
+        const card = document.createElement("div");
+        card.className = "forecast-card fade-in";
+        card.innerHTML = `
+            <span class="horizon-label">${horizonLabels[key]}</span>
+            <span class="horizon-value ${isPositive ? "positive" : "negative"}">
+            ${isPositive ? "+" : ""}${percent}%
+            </span>
+            <span class="horizon-amount">Rs. ${amount}</span>
+        `;
+        forecastResults.appendChild(card);
     });
   } catch (err) {
     forecastResults.innerHTML = "<p>Could not load forecast for this stock.</p>";
@@ -123,7 +143,10 @@ stockSelect.addEventListener("change", () => {
   const symbol = stockSelect.value;
   if (!symbol) return;
 
-  chartTitle.textContent = `Price History — ${symbol}`;
+  const selectedStock = allStocks.find(s => s.symbol === symbol);
+  const displayName = selectedStock ? `${selectedStock.name} (${selectedStock.symbol})` : symbol;
+  chartTitle.textContent = `Price History of ${displayName}`;
+  
   loadHistory(symbol);
   loadForecast(symbol);
 });
