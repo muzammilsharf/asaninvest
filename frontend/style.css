@@ -35,36 +35,10 @@ body {
   line-height: 1.5;
 }
 
-.logo {
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 28px;
-  margin-bottom: 4px;
-  letter-spacing: -0.5px;
-}
-
-.logo-light {
-  font-weight: 400;
-  color: var(--text-color);
-}
-
-.logo-bold-wrap {
-  position: relative;
-  display: inline-block;
-}
-
-.logo-mark {
-  position: absolute;
-  top: -11px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  color: var(--mark-color);
-}
-
-.logo-bold {
-  font-weight: 700;
-  font-style: italic;
-  color: var(--accent-color);
+.logo-img {
+  height: 84px;
+  width: auto;
+  display: block;
 }
 
 header p {
