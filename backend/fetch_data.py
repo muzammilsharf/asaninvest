@@ -4,10 +4,9 @@ import logging
 import time
 import tickers
 import psxdata
-from datetime import date, timedelta
+from datetime import date
 
-LOOKBACK_DAYS : int = 730
-START = date.today() - timedelta(days=LOOKBACK_DAYS)
+START = date(2024, 1, 1)
 END = date.today()
 logging.basicConfig(level=logging.INFO)
 REQUEST_DELAY_SECONDS = 2 
