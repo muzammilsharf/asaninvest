@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://asaninvest.fastapicloud.dev/";
+const API_BASE_URL = "https://asaninvest.fastapicloud.dev";
 
 const stockSelect = document.getElementById("stock-select");
 const chartTitle = document.getElementById("chart-title");
