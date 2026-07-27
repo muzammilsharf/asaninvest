@@ -41,6 +41,7 @@ def predict_for_symbol(symbol: str) -> dict:
         logging.error(f"Invalid or missing close price for symbol {symbol}: {close_val}")
         return {"symbol": symbol, "error": f"Invalid or missing close price for symbol {symbol}"}
     current_close = float(close_num)
+    as_of_date = str(row['date'].iat[0])
 
     predictions = {}
     try:
@@ -55,5 +56,8 @@ def predict_for_symbol(symbol: str) -> dict:
         logging.error(f"Prediction failed for symbol {symbol}: {str(e)}")
         return {"symbol": symbol, "error": f"Prediction failed for symbol {symbol}: {str(e)}"}
 
-    return {"symbol": symbol, "current_price": current_close, "predictions": predictions}
+    return {"symbol": symbol, "current_price": current_close, "as_of_date": as_of_date, "predictions": predictions}
 
+if __name__ == "__main__":
+    print(predict_for_symbol("HBL"))
+    print(predict_for_symbol("FAKE"))

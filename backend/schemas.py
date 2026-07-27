@@ -21,4 +21,5 @@ class HistoryPoint(BaseModel):
 class PredictionResponse(BaseModel):
     symbol: str
     current_price: float
+    as_of_date: str
     predictions: dict[str, dict[str, float]]
