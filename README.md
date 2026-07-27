@@ -60,15 +60,11 @@ Error naturally increases with horizon length, this is expected and consistent w
 
 ## Screenshots
 
-*(Add at least 3 screenshots here, e.g. the stock selector + chart view, the forecast cards, and the mobile view. Save them in a `screenshots/` folder and reference them like this:)*
-
-```markdown
 ![Stock selector and price chart](screenshots/ss1.png)
 ![Forecast cards](screenshots/ss2.png)
 ![Light theme view](screenshots/ss3.png)
 ![Mobile view](screenshots/ss4.png)
 ![Mobile view - 02](screenshots/ss5.png)
-```
 
 ## How to Run the Project
 
