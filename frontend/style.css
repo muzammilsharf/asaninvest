@@ -24,6 +24,12 @@
   box-sizing: border-box;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -33,6 +39,82 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.5;
+}
+
+.theme-switch {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--muted-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--accent-color);
+}
+
+.icon-sun,
+.icon-moon {
+  display: none;
+}
+
+[data-theme="dark"] .icon-moon,
+body:not([data-theme]) .icon-moon {
+  display: block;
+}
+
+[data-theme="light"] .icon-sun {
+  display: block;
+}
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 999;
+  transition: opacity 0.3s ease;
+}
+
+.page-loader p {
+  color: var(--muted-text);
+  font-size: 14px;
+}
+
+.spinner-large {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.page-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .logo-img {
@@ -72,6 +154,22 @@ select {
 canvas {
   max-height: 350px;
 }
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 .header-top {
   display: flex;
   justify-content: space-between;
@@ -102,6 +200,15 @@ canvas {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.as-of-date {
+  width: 100%;
+  margin-bottom: 8px;
+  color: var(--muted-text);
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
 }
 
 .forecast-card {
@@ -151,12 +258,6 @@ canvas {
   color: var(--negative-color);
 }
 
-.forecast-description {
-  font-size: 14px;
-  color: var(--muted-text);
-  margin-bottom: 12px;
-}
-
 footer {
   margin-top: 32px;
   padding-top: 16px;
@@ -167,6 +268,45 @@ footer {
   font-size: 13px;
   color: var(--muted-text);
   text-align: center;
+}
+
+.contact-section {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.connect-label {
+  font-size: 13px;
+  color: var(--muted-text);
+  margin: 0 0 8px 0;
+}
+
+.contact-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.contact-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-text);
+  transition: color 0.2s ease;
+}
+
+.contact-icons a:hover {
+  color: var(--accent-color);
+}
+
+.contact-icons a {
+  color: var(--muted-text);
+  transition: color 0.2s ease;
+}
+
+.contact-icons a:hover {
+  color: var(--accent-color);
 }
 
 @media (max-width: 480px) {
