@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://asaninvest.fastapicloud.dev";
+const API_BASE_URL = "http://127.0.0.1:8000";
 
 const stockSelect = document.getElementById("stock-select");
 const chartTitle = document.getElementById("chart-title");
@@ -9,7 +9,6 @@ let allStocks = [];
 
 function applyTheme(theme) {
   document.body.setAttribute("data-theme", theme);
-  themeToggle.textContent = theme === "light" ? "☀️" : "🌙";
   localStorage.setItem("theme", theme);
 }
 
@@ -24,9 +23,10 @@ themeToggle.addEventListener("click", () => {
 
 // Load the stock list and populate the dropdown
 async function loadStocks() {
+  const pageLoader = document.getElementById("page-loader");
   try {
     const response = await fetch(`${API_BASE_URL}/stocks`);
-    if (!response.ok) throw new Error("Failed to fetch stocks");
+    if (!response.ok) throw new Error("Main character energy is down.");
     const stocks = await response.json();
 
     stockSelect.innerHTML = "";
@@ -43,8 +43,10 @@ async function loadStocks() {
       stockSelect.appendChild(option);
     });
   } catch (err) {
-    stockSelect.innerHTML = '<option value="">Failed to load stocks</option>';
+    stockSelect.innerHTML = '<option value="">The server is not serving today. 😭</option>';
     console.error(err);
+  } finally {
+    pageLoader.classList.add("hidden");
   }
 }
 
@@ -114,6 +116,7 @@ async function loadForecast(symbol) {
     };
 
     forecastResults.innerHTML = "";
+
     Object.keys(horizonLabels).forEach((key) => {
         const horizonData = data.predictions[key];
         const percent = (horizonData.return * 100).toFixed(2);
@@ -131,6 +134,15 @@ async function loadForecast(symbol) {
         `;
         forecastResults.appendChild(card);
     });
+    const asOfLine = document.createElement("p");
+    asOfLine.className = "as-of-date";
+    const formattedDate = new Date(data.as_of_date).toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    asOfLine.textContent = `Note: All predictions are based on closing price of Rs. ${data.current_price.toFixed(2)} on ${formattedDate}`;
+    forecastResults.appendChild(asOfLine);
   } catch (err) {
     forecastResults.innerHTML = "<p>Could not load forecast for this stock.</p>";
     console.error(err);
