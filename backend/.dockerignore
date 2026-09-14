@@ -1,0 +1,7 @@
+# local production files
+.venv
+__pycache__
+*.pyc
+data/cache
+.git
+.env

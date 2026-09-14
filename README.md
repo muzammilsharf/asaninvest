@@ -71,8 +71,10 @@ Error naturally increases with horizon length, this is expected and consistent w
 ### Prerequisites
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/) installed
+- Docker (optional, for containerized setup)
+- Node.js not required, the frontend is plain HTML/CSS/JS
 
-### Backend
+### Backend (via uv)
 
 ```bash
 cd backend
@@ -81,6 +83,16 @@ uv run python fetch_data.py      # fetches and caches PSX historical data
 uv run python train_model.py     # builds features and trains all 4 models
 uv run uvicorn main:app --reload # starts the API at http://127.0.0.1:8000
 ```
+
+### Backend (via Docker)
+
+```bash
+cd backend
+docker build -t asaninvest-backend .
+docker run -p 8000:8000 asaninvest-backend
+```
+
+The API will be available at `http://127.0.0.1:8000`, visit `/docs` for interactive documentation. The Docker image uses a multi-stage build to keep the final image lean.
 
 Visit `http://127.0.0.1:8000/docs` for interactive API documentation.
 
