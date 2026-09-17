@@ -1,42 +1,107 @@
-# Add companies list which we are using in this project along with their sector and symbol
-TICKERS = [
-    # Banking Sector
-    {"symbol": "HBL", "name": "Habib Bank", "sector": "Banking"},
-    {"symbol": "UBL", "name": "United Bank", "sector": "Banking"},
-    {"symbol": "BAFL", "name": "Bank Alfalah", "sector": "Banking"},
-    {"symbol": "MCB", "name": "MCB Bank", "sector": "Banking"},
-    {"symbol": "ABL", "name": "Allied Bank", "sector": "Banking"},
+# Dictionary of stock tickers and their corresponding company names, categorized by industry sector. Each key in the outer dictionary represents an industry sector, and the value is another dictionary that maps stock tickers to their full company names.
 
-    # Energy Sector
-    {"symbol": "OGDC", "name": "Oil & Gas Development", "sector": "Energy"},
-    {"symbol": "PPL", "name": "Pakistan Petroleum", "sector": "Energy"},
-    {"symbol": "MARI", "name": "Mari Petroleum", "sector": "Energy"},
-    {"symbol": "PSO", "name": "Pakistan State Oil", "sector": "Energy"},
-    {"symbol": "SNGP", "name": "Sui Northern Gas Pipelines", "sector": "Energy"},
-
-    # Cement Sector
-    {"symbol": "LUCK", "name": "Lucky Cement", "sector": "Cement"},
-    {"symbol": "DGKC", "name": "D.G. Khan Cement", "sector": "Cement"},
-    {"symbol": "MLCF", "name": "Maple Leaf Cement", "sector": "Cement"},
-
-    # Fertilizer Sector
-    {"symbol": "FFC", "name": "Fauji Fertilizer Company", "sector": "Fertilizer"},
-    {"symbol": "ENGROH", "name": "Engro Holdings", "sector": "Fertilizer"},
-
-    # Power Sector
-    {"symbol": "HUBC", "name": "Hub Power Company", "sector": "Power"},
-    {"symbol": "KEL", "name": "K-Electric", "sector": "Power"},
-
-    # Technology Sector
-    {"symbol": "NETSOL", "name": "NetSol Technologies", "sector": "Technology"},
-    {"symbol": "TRG", "name": "TRG Pakistan", "sector": "Technology"},
-    {"symbol": "SYS", "name": "Systems Limited", "sector": "Technology"},
-
-    # Automobile Sector
-    {"symbol": "INDU", "name": "Indus Motor Company", "sector": "Automobile"},
-    {"symbol": "SAZEW", "name": "Sazgar Engineering", "sector": "Automobile"},
-    {"symbol": "HCAR", "name": "Honda Atlas Cars", "sector": "Automobile"},
-
-    # Miscellaneous
-    {"symbol": "PSX", "name": "Pakistan Stock Exchange", "sector": "Financial Services"},
-]
+TICKERS = {
+    "Commercial Banks": {
+        "HBL": "Habib Bank Limited",
+        "UBL": "United Bank Limited",
+        "BAFL": "Bank Alfalah Limited",
+        "MCB": "MCB Bank Limited",
+        "ABL": "Allied Bank Limited",
+        "MEBL": "Meezan Bank Limited",
+        "NBP": "National Bank of Pakistan",
+        "SCBPL": "Standard Chartered Bank (Pakistan)",
+        "BAHL": "Bank Al Habib Limited",
+        "AKBL": "Askari Bank Limited",
+        "FABL": "Faysal Bank Limited",
+        "HMBL": "Habib Metropolitan Bank Limited",
+        "BOP": "Bank of Punjab",
+        "SILK": "Silkbank Limited",
+        "SAMBL": "Samba Bank Limited",
+    },
+    "Oil & Gas Exploration Companies": {
+        "OGDC": "Oil & Gas Development Company",
+        "PPL": "Pakistan Petroleum Limited",
+        "MARI": "Mari Petroleum Company",
+        "PSO": "Pakistan State Oil",
+        "SNGP": "Sui Northern Gas Pipelines",
+        "POL": "Pakistan Oilfields Limited",
+    },
+    "Food & Personal Care Products": {
+        "NESTLE": "Nestle Pakistan Limited",
+        "COLG": "Colgate-Palmolive (Pakistan) Limited",
+        "UPFL": "Unilever Pakistan Foods Limited",
+        "ISIL": "Ismail Industries Limited",
+        "NATF": "National Foods Limited",
+        "FFL" : "Fauji Foods Limited",
+        "RMPL": "Rafhan Maize Products Company Limited",
+        "FCEPL": "FrieslandCampina Engro Pakistan Limited",
+        "MUREB": "Murree Brewery Company Limited",
+        "GLPL": "Gillette Pakistan Limited",
+        "TREET": "Treet Corporation Limited",
+        "UNITY": "Unity Foods Limited",
+        "PREMA": "At-Tahur Limited",
+    },
+    "Pharmaceuticals": {
+        "GLAXO": "GlaxoSmithKline Pakistan Limited",
+        "ABOT": "Abbott Pakistan Limited",
+        "HALEON": "Haleon Pakistan Limited",
+        "HINOON": "Highnoon Laboratories Limited",
+        "SEARL": "Searle Company Limited",
+        "AGP": "AGP Limited",
+        "HPL": "Hoescht Pakistan Limited",
+        "CPHL": "Citi Pharma Limited",
+        "FEROZ": "Ferozsons Laboratories Limited",
+    },
+    "Cement": {
+        "LUCK": "Lucky Cement Limited",
+        "DGKC": "D.G. Khan Cement Company",
+        "MLCF": "Maple Leaf Cement Factory",
+        "THCCL": "Thatta Cement Company",
+        "BWCL": "Bestway Cement Limited",
+        "FCCL": "Fauji Cement Company Limited",
+        "KOHC": "Kohat Cement Company",
+        "PIOC": "Pioneer Cement Limited",
+        "CHCC": "Cherat Cement Company",
+        "ACPL": "Attock Cement Pakistan Limited",
+        "POWER": "Power Cement Limited",
+        "DCL": "Dewan Cement Limited",
+    },
+    "Fertilizer": {
+        "FFC": "Fauji Fertilizer Company",
+        "ENGRO": "Engro Corporation",
+        "AHCL": "Arif Habib Corporation Limited",
+        "FFBL": "Fauji Fertilizer Bin Qasim Limited",
+        "EFERT": "Engro Fertilizers Limited",
+        "FATIMA": "Fatima Fertilizer Company Limited",
+        "AGL": "Agritech Limited",
+    },
+    "Power Generation & Distribution": {
+        "HUBC": "Hub Power Company",
+        "KEL": "K-Electric Limited",
+        "KAPCO": "Kot Addu Power Company",
+        "NPL": "Nishat Power Limited",
+        "NCPL": "Nishat Chunian Power Limited",
+    },
+    "Technology": {
+        "SYS": "Systems Limited",
+        "TRG": "TRG Pakistan Limited",
+        "NETSOL": "NetSol Technologies",
+        "PTC": "Pakistan Telecommunication Company Limited",
+        "AIRLINK": "Airlink Communication Ltd",
+        "SELECT": "Select Technologies (Pvt) Ltd",
+        "AVN": "Avanceon Limited",
+        "HUMNL": "Hum Network Limited",
+        "MDTL": "Media Times Limited",
+        "TPL": "TPL Corp Limited",
+        "ZUMA": "Zuma Resources Limited",
+        "TELE": "Telecard Limited",
+    },
+    "Automobile": {
+        "INDU": "Indus Motor Company",
+        "SAZEW": "Sazgar Engineering Works",
+        "HCAR": "Honda Atlas Cars (Pakistan)",
+    },
+    "Financial Services": {
+        "PSX": "Pakistan Stock Exchange",
+    },
+}
