@@ -13,10 +13,10 @@ TICKERS = {
         "BAHL": "Bank Al Habib Limited",
         "AKBL": "Askari Bank Limited",
         "FABL": "Faysal Bank Limited",
-        "HMBL": "Habib Metropolitan Bank Limited",
+        "HMB": "Habib Metropolitan Bank Limited",
         "BOP": "Bank of Punjab",
         "SILK": "Silkbank Limited",
-        "SAMBL": "Samba Bank Limited",
+        "SBL": "Samba Bank Limited",
     },
     "Oil & Gas Exploration Companies": {
         "OGDC": "Oil & Gas Development Company",
@@ -56,7 +56,7 @@ TICKERS = {
         "ISL": "International Steels Limited",
         "MUGHAL": "Mughal Iron & Steel Industries Limited",
         "INIL": "International Industries Limited",
-        "AISL": "Aisha Steel Mills Limited",
+        "ASL": "Aisha Steel Mills Limited",
         "BECO": "Beco Steel Limited",
         "PECO": "Pakistan Engineering Company Limited",
         "MUGHALC": "Mughal Iron & Steel Industries Limited (Cement Division)",
@@ -67,7 +67,6 @@ TICKERS = {
     "Insurance": {
         "EFUL": "EFU Life Assurance Limited",
         "JLICL": "Jubilee Life Insurance Company Limited",
-        "IGIIL": "IGI Insurance Limited",
         "AICL": "Adamjee Insurance Company Limited",
         "JGICL": "Jubilee General Insurance Company Limited",
         "PAKRI": "Pakistan Reinsurance Company Limited",
@@ -106,7 +105,7 @@ TICKERS = {
         "NCPL": "Nishat Chunian Power Limited",
         "PKGP": "Pakgen Power Limited",
         "GEMMEL": "Mughal Energy Limited (GEM)",
-        "EQPL": "Engro Powergen Qadirpur Limited",
+        "EPQL": "Engro Powergen Qadirpur Limited",
         "SGPL": "S.G. Power Limited",
     },
     "Technology": {
