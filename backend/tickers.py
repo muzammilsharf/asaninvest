@@ -15,7 +15,6 @@ TICKERS = {
         "FABL": "Faysal Bank Limited",
         "HMB": "Habib Metropolitan Bank Limited",
         "BOP": "Bank of Punjab",
-        "SILK": "Silkbank Limited",
         "SBL": "Samba Bank Limited",
     },
     "Oil & Gas Exploration Companies": {
@@ -119,7 +118,6 @@ TICKERS = {
         "HUMNL": "Hum Network Limited",
         "MDTL": "Media Times Limited",
         "TPL": "TPL Corp Limited",
-        "ZUMA": "Zuma Resources Limited",
         "TELE": "Telecard Limited",
     },
     "Automobile": {
