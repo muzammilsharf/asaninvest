@@ -23,7 +23,8 @@ def get_stocks():
 # for history endpoint
 @app.get("/history/{symbol}", response_model=list[HistoryPoint])
 def get_history(symbol: str):
-    if symbol not in [s['symbol'] for s in tickers.TICKERS]:
+    symbol_list = {symbol for sector in tickers.TICKERS.values() for symbol in sector}
+    if symbol not in symbol_list:
         raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found")
 
     try:
@@ -36,7 +37,8 @@ def get_history(symbol: str):
 # for prediction endpoint
 @app.get("/predict/{symbol}", response_model=PredictionResponse)
 def get_prediction(symbol: str):
-    if symbol not in [s['symbol'] for s in tickers.TICKERS]:
+    symbol_list = {symbol for sector in tickers.TICKERS.values() for symbol in sector}
+    if symbol not in symbol_list:
         raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found")
 
     prediction_result = predict_for_symbol(symbol)
