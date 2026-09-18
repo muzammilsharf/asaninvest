@@ -5,6 +5,7 @@ import time
 import tickers
 import psxdata
 import pandas as pd
+import cache_utils
 from datetime import date, timedelta
 
 FULL_HISTORY_START = date(2024, 1, 1)
@@ -17,21 +18,6 @@ def ensure_cache_directories_exists() -> None:
     for key in tickers.TICKERS:
         sector = key
         os.makedirs(f"data/cache/{sector}", exist_ok=True)
-
-# Return the most recent date already cached for a symbol
-def get_last_cached_date(symbol: str, sector: str) -> date | None:
-    path = f"data/cache/{sector}/{symbol}.csv"
-    if not os.path.exists(path):
-        return None
-    try:
-        df = pd.read_csv(path)
-        if df.empty or "date" not in df.columns:
-            return None
-        df["date"] = pd.to_datetime(df["date"])
-        return df["date"].max().date()
-    except Exception as e:
-        logging.error(f"Could not read cached file for {symbol}: {e}")
-        return None
 
 
 # Fetch data for a single ticker over a specific date range.
@@ -71,7 +57,7 @@ def save_ticker_data(symbol: str, sector: str, data: pd.DataFrame, append: bool)
 
 # Fetch data for a single ticker with retry logic, using an incremental date range based on what's already cached.
 def fetch_and_save_with_retry(symbol: str, sector: str) -> bool:
-    last_date = get_last_cached_date(symbol, sector)
+    last_date = cache_utils.get_last_cached_date(symbol, sector)
     append = last_date is not None
  
     if append:
