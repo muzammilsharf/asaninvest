@@ -1,22 +1,18 @@
-"""
-Data quality checks for cached PSX ticker data.
-
-"""
+"""Data quality checks for cached PSX ticker data, organized by sector."""
 
 import os
 import logging
 import pandas as pd
-import tickers
+import cache_utils
+from datetime import date
+
 
 logging.basicConfig(level=logging.INFO)
-
-CACHE_DIR = "data/cache"
 MIN_HISTORY_DAYS = 365
 
-
-def check_ticker(symbol: str) -> dict:
+def check_ticker(symbol: str, sector: str) -> dict:
     result = {"symbol": symbol, "issues": []}
-    path = os.path.join(CACHE_DIR, f"{symbol}.csv")
+    path = os.path.join(cache_utils.get_cache_directory(sector), f"{symbol}.csv")
 
     if not os.path.exists(path):
         result["issues"].append("no cached CSV found, run fetch_data.py first")
@@ -35,6 +31,13 @@ def check_ticker(symbol: str) -> dict:
 
     result["rows"] = len(df)
     result["date_range"] = f"{df[date_col].min().date()} to {df[date_col].max().date()}"
+
+    # staleness: how many calendar days since the last cached entry
+    last_date = cache_utils.get_last_cached_date(symbol, sector)
+    if last_date is not None:
+        days_since_update = (date.today() - last_date).days
+        if days_since_update > 7:
+            result["issues"].append(f"stale, last updated {days_since_update} days ago ({last_date})")
 
     # 1. enough history
     if len(df) < MIN_HISTORY_DAYS:
@@ -92,10 +95,10 @@ def check_ticker(symbol: str) -> dict:
 
 
 def main() -> None:
-    symbols = [t["symbol"] for t in tickers.TICKERS]
-    logging.info(f"Checking {len(symbols)} cached tickers in {CACHE_DIR}")
+    pairs = cache_utils.get_all_symbol_sector_pairs()
+    logging.info(f"Checking {len(pairs)} cached tickers across {len(cache_utils.get_sector_list())} sectors")
 
-    summary = [check_ticker(symbol) for symbol in symbols]
+    summary = [check_ticker(symbol, sector) for symbol, sector in pairs]
 
     print("\n" + "=" * 60)
     print("SUMMARY")
@@ -109,10 +112,9 @@ def main() -> None:
             print(f"  - {issue}")
 
     passed = sum(1 for r in summary if r.get("status") == "PASS")
-    print(f"\n{passed}/{len(symbols)} tickers passed with no issues.")
+    print(f"\n{passed}/{len(pairs)} tickers passed with no issues.")
     print("Tickers with issues aren't automatically unusable, review each")
     print("flag manually before deciding to drop or refetch a ticker.")
-
 
 if __name__ == "__main__":
     main()
