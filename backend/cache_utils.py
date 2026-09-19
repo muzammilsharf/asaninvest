@@ -26,6 +26,9 @@ def get_sector_list() -> list[str]:
 def get_all_tickers(sector: str) -> list[str]:
     return list(tickers.TICKERS.get(sector, []))
 
+def get_ticker_name(symbol: str, sector: str) -> str:
+    return tickers.TICKERS.get(sector, {}).get(symbol, symbol)
+
 # Get the last cached date for a given symbol and sector. Returns None if no cached data exists or if the CSV is empty or malformed.
 def get_last_cached_date(symbol: str, sector: str) -> date | None:
     path = os.path.join(get_cache_directory(sector), f"{symbol}.csv")
