@@ -1,4 +1,4 @@
-# Return the most recent date already cached for a symbol used in fetching data and checking data
+# Find the cache directory, all sectors, and all tickers for a given sector. Also get the last cached date for a given symbol and sector.
 
 from datetime import date
 import os
@@ -19,6 +19,13 @@ def get_tickers_for_sector(sector: str) -> list[str]:
     if not os.path.exists(path):
         return []
     return [f.split(".csv")[0] for f in os.listdir(path) if f.endswith(".csv")] 
+
+# get all the tickers symbols for all sectors
+def get_all_tickers() -> list[str]:
+    tickers = []
+    for sector in get_sector_list():
+        tickers.extend(get_tickers_for_sector(sector))
+    return tickers
 
 # Get the last cached date for a given symbol and sector. Returns None if no cached data exists or if the CSV is empty or malformed.
 def get_last_cached_date(symbol: str, sector: str) -> date | None:
