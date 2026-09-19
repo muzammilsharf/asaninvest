@@ -82,15 +82,32 @@ def check_ticker(symbol: str, sector: str) -> dict:
         (df[low_c] > df[[open_c, close_c, high_c]].min(axis=1))
     ).sum()
     if bad_ohlc > 0:
-        result["issues"].append(f"{bad_ohlc} rows break High/Low logic")
+        ohlc_violation_pct = bad_ohlc / len(df)
+        if ohlc_violation_pct > 0.05:
+            result["issues"].append(
+                f"{bad_ohlc} rows ({ohlc_violation_pct:.1%}) break High/Low logic, exceeds 5% threshold"
+            )
+            result["status"] = "FAIL"
+        else:
+            result["issues"].append(f"{bad_ohlc} rows break High/Low logic")
 
-    # 8. extreme one-day jumps (>25%), flag for manual review, not auto-fail
+    # 8. extreme one-day jumps beyond PSX's ~10% circuit breaker limit,
+    # only counted when the gap to the previous row is a normal trading
+    # gap (1-4 calendar days), so a missing-data gap doesn't get
+    # misread as one huge price jump
+    date_gap = df[date_col].diff().dt.days
     pct_change = df[close_c].pct_change().abs()
-    extreme_moves = (pct_change > 0.25).sum()
+    extreme_moves = ((pct_change > 0.12) & (date_gap <= 4)).sum()
     if extreme_moves > 0:
-        result["issues"].append(f"{extreme_moves} days with >25% price move, verify manually")
+        result["issues"].append(f"{extreme_moves} days beyond PSX's ~10% circuit limit, verify manually")
 
-    result["status"] = "PASS" if not result["issues"] else "CHECK"
+    large_gaps = (date_gap > 9).sum()
+    if large_gaps > 0:
+        result["issues"].append(f"{large_gaps} gap(s) of more than 9 days between consecutive cached rows")
+
+    if "status" not in result:
+        result["status"] = "PASS" if not result["issues"] else "CHECK"
+        
     return result
 
 
