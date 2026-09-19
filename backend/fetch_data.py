@@ -2,7 +2,6 @@
 import os
 import logging
 import time
-import tickers
 import psxdata
 import pandas as pd
 import cache_utils
@@ -15,9 +14,8 @@ REQUEST_DELAY_SECONDS = 2
 
 # Ensure that the cache directory exists.
 def ensure_cache_directories_exists() -> None:
-    for key in tickers.TICKERS:
-        sector = key
-        os.makedirs(f"data/cache/{sector}", exist_ok=True)
+    for sector in cache_utils.get_sector_list():
+        os.makedirs(cache_utils.get_cache_directory(sector), exist_ok=True)
 
 
 # Fetch data for a single ticker over a specific date range.
@@ -36,7 +34,7 @@ def fetch_ticker_data(symbol: str, start: date, end: date) -> dict:
 
 # Save data for a single ticker to CSV, either as a fresh file or appended to an existing one. When appending, rows already present (by date) are dropped first as a safety net against duplicates.
 def save_ticker_data(symbol: str, sector: str, data: pd.DataFrame, append: bool) -> None:
-    path = f"data/cache/{sector}/{symbol}.csv"
+    path = os.path.join(cache_utils.get_cache_directory(sector), f"{symbol}.csv")
  
     if append and os.path.exists(path):
         existing = pd.read_csv(path)
@@ -54,12 +52,20 @@ def save_ticker_data(symbol: str, sector: str, data: pd.DataFrame, append: bool)
         data.to_csv(path, index=False)
         logging.info(f"Data for {symbol} saved to {path} with {len(data)} rows.")
 
+def _attempt_fetch_and_save(symbol: str, sector: str, start: date, append: bool) -> bool | None:
+    result = fetch_ticker_data(symbol, start, END)
+    if result["success"]:
+        save_ticker_data(symbol, sector, result["data"], append)
+        return True
+    if result.get("empty"):
+        return True
+    return None
 
 # Fetch data for a single ticker with retry logic, using an incremental date range based on what's already cached.
 def fetch_and_save_with_retry(symbol: str, sector: str) -> bool:
     last_date = cache_utils.get_last_cached_date(symbol, sector)
     append = last_date is not None
- 
+
     if append:
         start = last_date + timedelta(days=1)
         if start > END:
@@ -67,25 +73,17 @@ def fetch_and_save_with_retry(symbol: str, sector: str) -> bool:
             return True
     else:
         start = FULL_HISTORY_START
- 
-    result = fetch_ticker_data(symbol, start, END)
-    if result["success"]:
-        save_ticker_data(symbol, sector, result["data"], append)
-        return True
- 
-    if result.get("empty"):
-        # No new trading data for this range, not a failure.
-        return True
- 
+
+    outcome = _attempt_fetch_and_save(symbol, sector, start, append)
+    if outcome is not None:
+        return outcome
+
     logging.info(f"Retrying fetch for {symbol}...")
     time.sleep(REQUEST_DELAY_SECONDS)
-    retry_result = fetch_ticker_data(symbol, start, END)
-    if retry_result["success"]:
-        save_ticker_data(symbol, sector, retry_result["data"], append)
-        return True
-    if retry_result.get("empty"):
-        return True
- 
+    outcome = _attempt_fetch_and_save(symbol, sector, start, append)
+    if outcome is not None:
+        return outcome
+
     logging.error(f"Failed to fetch data for {symbol} after retry.")
     return False
  
@@ -93,11 +91,12 @@ def fetch_and_save_with_retry(symbol: str, sector: str) -> bool:
 def fetch_data() -> None:
     ensure_cache_directories_exists()
     failed_tickers: list = []
- 
-    for sector, companies in tickers.TICKERS.items():
+
+    for sector in cache_utils.get_sector_list():
+        companies = cache_utils.get_all_tickers(sector)
         logging.info(f"--- Processing sector: {sector} ({len(companies)} tickers) ---")
-        for symbol, name in companies.items():
-            logging.info(f"Fetching data for {symbol} ({name}) - {sector}...")
+        for symbol in companies:
+            logging.info(f"Fetching data for {symbol} - {sector}...")
             if not fetch_and_save_with_retry(symbol, sector):
                 failed_tickers.append(symbol)
  
