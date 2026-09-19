@@ -35,7 +35,6 @@ TICKERS = {
         "RMPL": "Rafhan Maize Products Company Limited",
         "FCEPL": "FrieslandCampina Engro Pakistan Limited",
         "MUREB": "Murree Brewery Company Limited",
-        "GLPL": "Gillette Pakistan Limited",
         "TREET": "Treet Corporation Limited",
         "UNITY": "Unity Foods Limited",
         "PREMA": "At-Tahur Limited",
@@ -91,7 +90,6 @@ TICKERS = {
     "Fertilizer": {
         "FFC": "Fauji Fertilizer Company",
         "AHCL": "Arif Habib Corporation Limited",
-        "FFBL": "Fauji Fertilizer Bin Qasim Limited",
         "EFERT": "Engro Fertilizers Limited",
         "FATIMA": "Fatima Fertilizer Company Limited",
         "AGL": "Agritech Limited",
@@ -150,7 +148,6 @@ TICKERS = {
         "LSEVL": "LSE Ventures Limited",
         "JSGCL": "JS Global Capital Limited",
         "FNEL": "First National Equities Limited",
-        "CYAN": "Cyan Limited",
         "JSIL": "JS Investments Limited",
         "LSECL": "LSE Capital Limited",
         "FCIBL": "First Credit and Investment Bank Limited",
