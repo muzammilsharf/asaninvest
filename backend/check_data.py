@@ -1,22 +1,18 @@
-"""
-Data quality checks for cached PSX ticker data.
-
-"""
+"""Data quality checks for cached PSX ticker data, organized by sector."""
 
 import os
 import logging
 import pandas as pd
-import tickers
+import cache_utils
+from datetime import date
+
 
 logging.basicConfig(level=logging.INFO)
-
-CACHE_DIR = "data/cache"
 MIN_HISTORY_DAYS = 365
 
-
-def check_ticker(symbol: str) -> dict:
+def check_ticker(symbol: str, sector: str) -> dict:
     result = {"symbol": symbol, "issues": []}
-    path = os.path.join(CACHE_DIR, f"{symbol}.csv")
+    path = os.path.join(cache_utils.get_cache_directory(sector), f"{symbol}.csv")
 
     if not os.path.exists(path):
         result["issues"].append("no cached CSV found, run fetch_data.py first")
@@ -35,6 +31,13 @@ def check_ticker(symbol: str) -> dict:
 
     result["rows"] = len(df)
     result["date_range"] = f"{df[date_col].min().date()} to {df[date_col].max().date()}"
+
+    # staleness: how many calendar days since the last cached entry
+    last_date = cache_utils.get_last_cached_date(symbol, sector)
+    if last_date is not None:
+        days_since_update = (date.today() - last_date).days
+        if days_since_update > 7:
+            result["issues"].append(f"stale, last updated {days_since_update} days ago ({last_date})")
 
     # 1. enough history
     if len(df) < MIN_HISTORY_DAYS:
@@ -79,23 +82,40 @@ def check_ticker(symbol: str) -> dict:
         (df[low_c] > df[[open_c, close_c, high_c]].min(axis=1))
     ).sum()
     if bad_ohlc > 0:
-        result["issues"].append(f"{bad_ohlc} rows break High/Low logic")
+        ohlc_violation_pct = bad_ohlc / len(df)
+        if ohlc_violation_pct > 0.05:
+            result["issues"].append(
+                f"{bad_ohlc} rows ({ohlc_violation_pct:.1%}) break High/Low logic, exceeds 5% threshold"
+            )
+            result["status"] = "FAIL"
+        else:
+            result["issues"].append(f"{bad_ohlc} rows break High/Low logic")
 
-    # 8. extreme one-day jumps (>25%), flag for manual review, not auto-fail
+    # 8. extreme one-day jumps beyond PSX's ~10% circuit breaker limit,
+    # only counted when the gap to the previous row is a normal trading
+    # gap (1-4 calendar days), so a missing-data gap doesn't get
+    # misread as one huge price jump
+    date_gap = df[date_col].diff().dt.days
     pct_change = df[close_c].pct_change().abs()
-    extreme_moves = (pct_change > 0.25).sum()
+    extreme_moves = ((pct_change > 0.12) & (date_gap <= 4)).sum()
     if extreme_moves > 0:
-        result["issues"].append(f"{extreme_moves} days with >25% price move, verify manually")
+        result["issues"].append(f"{extreme_moves} days beyond PSX's ~10% circuit limit, verify manually")
 
-    result["status"] = "PASS" if not result["issues"] else "CHECK"
+    large_gaps = (date_gap > 9).sum()
+    if large_gaps > 0:
+        result["issues"].append(f"{large_gaps} gap(s) of more than 9 days between consecutive cached rows")
+
+    if "status" not in result:
+        result["status"] = "PASS" if not result["issues"] else "CHECK"
+        
     return result
 
 
 def main() -> None:
-    symbols = [t["symbol"] for t in tickers.TICKERS]
-    logging.info(f"Checking {len(symbols)} cached tickers in {CACHE_DIR}")
+    pairs = cache_utils.get_all_symbol_sector_pairs()
+    logging.info(f"Checking {len(pairs)} cached tickers across {len(cache_utils.get_sector_list())} sectors")
 
-    summary = [check_ticker(symbol) for symbol in symbols]
+    summary = [check_ticker(symbol, sector) for symbol, sector in pairs]
 
     print("\n" + "=" * 60)
     print("SUMMARY")
@@ -109,10 +129,9 @@ def main() -> None:
             print(f"  - {issue}")
 
     passed = sum(1 for r in summary if r.get("status") == "PASS")
-    print(f"\n{passed}/{len(symbols)} tickers passed with no issues.")
+    print(f"\n{passed}/{len(pairs)} tickers passed with no issues.")
     print("Tickers with issues aren't automatically unusable, review each")
     print("flag manually before deciding to drop or refetch a ticker.")
-
 
 if __name__ == "__main__":
     main()
